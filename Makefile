@@ -8,10 +8,15 @@ build:
 	go build main.go
 	-mv main bin/${NAME}
 
+build-mock:
+	@echo "build-mock: building to bin/${NAME}..."
+	@mkdir -p bin
+	go build -o bin/mock mock/mock.go
+
 # run program
-run:
+run: build
 	@echo "run: running..."
-	go run main.go
+	cd bin && ./${NAME}
 
 
 # bundle program with windows icon
