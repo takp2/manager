@@ -25,10 +25,10 @@ func main() {
 	// clear the screen on exit
 	fmt.Print("\033[H\033[2J")
 	if err != nil {
-		fmt.Println("Failed to run:", err)
+		fmt.Println("Manager failed:", err)
 		os.Exit(1)
 	}
-	fmt.Printf("Exited after %0.2f seconds\n", time.Since(start).Seconds())
+	fmt.Printf("Manager exited after %0.2f seconds\n", time.Since(start).Seconds())
 }
 
 func run() error {

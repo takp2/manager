@@ -1,11 +1,11 @@
 NAME := manager
-VERSION ?= 0.0.1
+VERSION ?= 0.0.2
 
 # build for local OS
 build:
 	@echo "build: building to bin/${NAME}..."
 	@mkdir -p bin
-	go build main.go
+	go build -o bin/${NAME} -ldflags="-X main.Version=${VERSION} -s -w" main.go 
 	-mv main bin/${NAME}
 
 build-mock:
@@ -19,6 +19,11 @@ run: build
 	cd bin && ./${NAME}
 
 
+run-test: build
+	@echo "run-test: running..."
+	cp bin/${NAME} ../server/build/bin/${NAME}
+	cd ../server/build/bin && ./${NAME}
+	
 # bundle program with windows icon
 bundle:
 	@echo "if go-winres is not found, run go install github.com/tc-hib/go-winres@latest"

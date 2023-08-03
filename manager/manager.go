@@ -112,7 +112,7 @@ func (mgr *manager) lineParse(line string) {
 		mgr.setState(reporter.AppStateSleeping)
 		return
 	}
-	if mgr.exeName == "world" && strings.Contains(line, "Client (UDP) listener started") {
+	if mgr.exeName == "world" && strings.Contains(line, "UDP Listening on") {
 		mgr.setState(reporter.AppStateRunning)
 		return
 	}

@@ -12,10 +12,6 @@ import (
 	"golang.org/x/term"
 )
 
-var (
-	columnWidth = 30
-)
-
 type Dashboard struct {
 	version string
 }
@@ -46,7 +42,7 @@ func (e Dashboard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Cool, what was the actual key pressed?
 		switch msg.String() {
 		// These keys should exit the program.
-		case "ctrl+c":
+		case "ctrl+c", "q":
 			signal.Cancel()
 			signal.WaitWorker()
 			return e, tea.Quit
@@ -61,10 +57,19 @@ func (e Dashboard) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (e Dashboard) View() string {
 	physicalWidth, _, _ := term.GetSize(int(os.Stdout.Fd()))
 
+	titleWidth := 77
+	if physicalWidth < titleWidth {
+		titleWidth = physicalWidth
+	}
 	doc := strings.Builder{}
 
 	height := 0
-	doc.WriteString(titleStyle.Width(physicalWidth).Render("Manager v" + e.version))
+	select {
+	case <-signal.Ctx().Done():
+		doc.WriteString(titleStyle.Width(titleWidth).Render("Shutting down..."))
+	default:
+		doc.WriteString(titleStyle.Width(titleWidth).Render("Manager v" + e.version))
+	}
 	doc.WriteString("\n\n")
 	height += 2
 
@@ -76,15 +81,18 @@ func (e Dashboard) View() string {
 		list.Render(
 			lipgloss.JoinVertical(
 				lipgloss.Left,
-				listHeader("World"),
-				renderState(state.States["world"], ""),
-				renderIcon("👤", fmt.Sprintf("%d Online", 3)), // person emoji: 👤
+				listHeader("Services"),
+				renderState(state.States["loginserver"], "LoginServer"),
+				renderState(state.States["world"], "World"),
+				renderState(state.States["ucs"], "UCS"),
+				renderState(state.States["queryserv"], "QueryServ"),
+				renderState(state.States["talkeq"], "TalkEQ"),
 			),
 		),
-		list.Copy().Width(columnWidth).Render(
+		list.Copy().Width(16).Render(
 			lipgloss.JoinVertical(
 				lipgloss.Left,
-				listHeader(fmt.Sprintf("Zone (%d)", state.ZoneTotal)),
+				listHeader(fmt.Sprintf("Zones (%d)", state.ZoneTotal)),
 				renderState(reporter.AppStateRunning, fmt.Sprintf("%d", state.ZoneRunning)),
 				renderState(reporter.AppStateStarting, fmt.Sprintf("%d", state.ZoneStarting)),
 				renderState(reporter.AppStateSleeping, fmt.Sprintf("%d", state.ZoneSleeping)),
@@ -93,14 +101,11 @@ func (e Dashboard) View() string {
 				renderState(reporter.AppStateStopped, fmt.Sprintf("%d", state.ZoneStopped)),
 			),
 		),
-		list.Copy().Width(columnWidth).Render(
+		list.Copy().Width(27).Render(
 			lipgloss.JoinVertical(
 				lipgloss.Left,
-				listHeader("Other"),
-				renderState(state.States["loginserver"], "LoginServer"),
-				renderState(state.States["ucs"], "UCS"),
-				renderState(state.States["queryserv"], "QueryServ"),
-				renderState(state.States["talkeq"], "TalkEQ"),
+				listHeader("Stats"),
+				renderIcon("👤", fmt.Sprintf("%d Online", 3)), // person emoji: 👤
 			),
 		),
 	))

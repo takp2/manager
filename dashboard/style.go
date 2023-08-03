@@ -13,7 +13,7 @@ var (
 
 	titleStyle = lipgloss.NewStyle().
 			Align(lipgloss.Center).
-			Foreground(lipgloss.Color("#8BE9FD")). // green #8BE9FD
+			Foreground(lipgloss.Color("#43BF6D")). // green #8BE9FD
 			Background(subtle)
 
 	list = lipgloss.NewStyle().
@@ -21,7 +21,7 @@ var (
 		BorderForeground(subtle).
 		MarginRight(2).
 		Height(8).
-		Width(columnWidth + 1)
+		Width(27)
 
 	listHeader = lipgloss.NewStyle().
 			BorderStyle(lipgloss.NormalBorder()).
@@ -34,7 +34,7 @@ var (
 func renderState(state reporter.AppState, msg string) string {
 	switch state {
 	case reporter.AppStateRunning:
-		return lipgloss.NewStyle().SetString("✔").
+		return lipgloss.NewStyle().SetString("✔ ").
 			Foreground(green).
 			PaddingRight(1).
 			String() + lipgloss.NewStyle().
@@ -48,7 +48,7 @@ func renderState(state reporter.AppState, msg string) string {
 			Foreground(lipgloss.AdaptiveColor{Light: "#969B86", Dark: "#696969"}).
 			Render(msg+" Sleeping")
 	case reporter.AppStateStopped:
-		return lipgloss.NewStyle().SetString("✖"). //crossmark
+		return lipgloss.NewStyle().SetString("✖ "). //crossmark
 								Foreground(red).
 								PaddingRight(1).
 								String() + lipgloss.NewStyle().
@@ -63,7 +63,7 @@ func renderState(state reporter.AppState, msg string) string {
 								Foreground(lipgloss.AdaptiveColor{Light: "#969B86", Dark: "#696969"}).
 								Render(msg+" Starting")
 	case reporter.AppStateErroring:
-		return lipgloss.NewStyle().SetString("⚠"). //warning
+		return lipgloss.NewStyle().SetString("⚠ "). //warning
 								Foreground(red).
 								PaddingRight(1).
 								String() + lipgloss.NewStyle().
@@ -78,7 +78,7 @@ func renderState(state reporter.AppState, msg string) string {
 								Foreground(lipgloss.AdaptiveColor{Light: "#969B86", Dark: "#696969"}).
 								Render(msg+" Restarting")
 	default:
-		return lipgloss.NewStyle().SetString("?").
+		return lipgloss.NewStyle().SetString("? ").
 			Foreground(yellow).
 			PaddingRight(1).
 			String() + lipgloss.NewStyle().

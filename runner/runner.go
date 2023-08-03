@@ -75,10 +75,9 @@ func (r *Runner) Stop() error {
 	if r.cmd == nil {
 		return nil
 	}
-
-	err := r.cmd.Process.Kill()
+	err := r.cmd.Process.Signal(os.Interrupt)
 	if err != nil {
-		return fmt.Errorf("kill: %w", err)
+		return fmt.Errorf("signal: %w", err)
 	}
 
 	return nil
